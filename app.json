@@ -1,24 +1,19 @@
 {
   "expo": {
-    "name": "my-expo-app",
-    "slug": "my-expo-app",
+    "name": "joint",
+    "slug": "joint",
     "version": "1.0.0",
-
+    "scheme": "joint",
     "web": {
       "favicon": "./assets/favicon.png"
     },
-
     "experiments": {
       "tsconfigPaths": true
     },
-
-    "plugins": [],
-
+    "plugins": ["expo-router"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-
     "userInterfaceStyle": "light",
-
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -32,6 +27,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.kennedyodhiambo.joint"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5e9b04a0-a9bc-4b4d-828c-0b28e8bc65aa"
       }
     }
   }
