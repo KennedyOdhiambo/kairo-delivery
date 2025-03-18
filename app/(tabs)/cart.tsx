@@ -1,12 +1,13 @@
-import { View, Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from 'react'
+import { ScrollView, StatusBar, Text, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function Cart() {
+  const insets = useSafeAreaInsets()
   return (
-    <SafeAreaView className="flex-1">
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-2xl font-bold">Cart</Text>
-      </View>
-    </SafeAreaView>
-  );
+    <View style={{ paddingTop: insets.top }} className="flex-1 items-center bg-background">
+      <Text className="text-xl font-semibold">Cart</Text>
+      <ScrollView />
+    </View>
+  )
 }

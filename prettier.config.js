@@ -20,6 +20,5 @@ module.exports = {
     '^(assets|styles)/',
     '^[./]',
   ],
-  importOrderSeparation: true,
   importOrderSortSpecifiers: true,
 }
