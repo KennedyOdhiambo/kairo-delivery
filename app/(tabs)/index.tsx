@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
 import { Image } from 'expo-image'
 import { Link, router } from 'expo-router'
 import { Animated, Pressable, SectionList, StatusBar, Text, View } from 'react-native'
@@ -132,7 +133,43 @@ function ListItem({
   )
 }
 
+function ButtonSheet({ bottomSheetRef }: { bottomSheetRef: React.RefObject<BottomSheet> }) {
+  return (
+    <BottomSheet
+      ref={bottomSheetRef}
+      index={-1}
+      backgroundStyle={{ backgroundColor: '#fff' }}
+      handleIndicatorStyle={{ backgroundColor: '#999', width: 40 }}
+      enablePanDownToClose>
+      <BottomSheetView className="flex-1 px-6 py-4">
+        <Text className="text-xl font-bold mb-6">Options</Text>
+
+        <Pressable className="flex-row items-center py-3 border-b border-gray-100">
+          <Ionicons name="information-circle-outline" size={24} color="#333" />
+          <Text className="text-lg ml-4">About Restaurant</Text>
+        </Pressable>
+
+        <Pressable className="flex-row items-center py-3 border-b border-gray-100">
+          <Ionicons name="star-outline" size={24} color="#333" />
+          <Text className="text-lg ml-4">Rate Us</Text>
+        </Pressable>
+
+        <Pressable className="flex-row items-center py-3 border-b border-gray-100">
+          <Ionicons name="share-social-outline" size={24} color="#333" />
+          <Text className="text-lg ml-4">Share</Text>
+        </Pressable>
+
+        <Pressable className="flex-row items-center py-3">
+          <Ionicons name="call-outline" size={24} color="#333" />
+          <Text className="text-lg ml-4">Contact</Text>
+        </Pressable>
+      </BottomSheetView>
+    </BottomSheet>
+  )
+}
+
 export default function Home() {
+  const bottomSheetRef = React.useRef<BottomSheet>(null)
   const [cartItems, setCartItems] = useState<Record<string, { quantity: number; price: number }>>(
     {}
   )
@@ -141,7 +178,6 @@ export default function Home() {
     (sum, item) => sum + item.price * item.quantity,
     0
   )
-
   const animation = useRef(new Animated.Value(0)).current
   useEffect(() => {
     Animated.timing(animation, {
@@ -196,7 +232,7 @@ export default function Home() {
                   <Ionicons name="search" size={20} color="black" />
                 </Pressable>
                 <Pressable
-                  onPress={() => router.push('/search')}
+                  onPress={() => bottomSheetRef.current?.expand()}
                   className="p-2 z-10 bg-white rounded-full">
                   <Ionicons name="ellipsis-vertical-outline" size={20} color="black" />
                 </Pressable>
@@ -239,6 +275,7 @@ export default function Home() {
           </Pressable>
         </Link>
       </Animated.View>
+      <ButtonSheet bottomSheetRef={bottomSheetRef} />
     </View>
   )
 }
