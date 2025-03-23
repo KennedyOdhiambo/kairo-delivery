@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { products } from 'data/products'
 
 export type CartState = {
-  cartItems: Record<string, { quantity: number; price: number }>
+  cartItems: Record<string, { quantity: number; price: number; photo: string; name: string }>
   addToCart: (item: any) => void
   removeFromCart: (itemId: string) => void
   getTotalCost: () => number
@@ -22,6 +22,8 @@ export const useStore = create<CartState>((set, get) => ({
           [itemId]: {
             quantity: existingItem ? existingItem.quantity + 1 : 1,
             price: item.price || 0,
+            photo: item.image,
+            name: item.name,
           },
         },
       }

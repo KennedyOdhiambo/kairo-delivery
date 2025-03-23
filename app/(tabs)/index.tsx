@@ -131,8 +131,8 @@ export default function Home() {
   const bottomSheetRef = React.useRef<BottomSheet>(null)
   const scrollY = useRef(new Animated.Value(0)).current
   const cartItems = useStore((state) => state.cartItems)
-  const getTotalCost = useStore((state) => state.getTotalCost)
-  const totalCost = getTotalCost()
+  const useTotalCost = useStore((state) => state.getTotalCost)
+  const totalCost = useTotalCost()
   const animation = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
