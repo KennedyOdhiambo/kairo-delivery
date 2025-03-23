@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { Image } from 'expo-image'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { Animated, Pressable, SectionList, StatusBar, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { products } from 'data/products'
@@ -26,15 +26,15 @@ function NavBar({ scrollY }: { scrollY: Animated.Value }) {
         shadowRadius: 2,
         elevation: 1,
       }}>
-      <View className="p-2.5 z-20 bg-gray-100 rounded-full">
+      <Pressable className="p-2.5 z-20 bg-gray-100 rounded-full">
         <Ionicons name="arrow-back" size={20} color="black" />
-      </View>
+      </Pressable>
       <Text className="text-lg font-medium">Okoth's Joint</Text>
-      <View className="flex-row gap-3">
-        <View className="p-2.5 z-10 bg-gray-100 rounded-full">
-          <Ionicons name="search" size={20} color="black" />
-        </View>
-      </View>
+      <Pressable
+        onPress={() => router.push('/search')}
+        className="p-2.5 z-20 bg-gray-100 rounded-full">
+        <Ionicons name="search" size={20} color="black" />
+      </Pressable>
     </Animated.View>
   )
 }
@@ -190,12 +190,16 @@ export default function Home() {
                 <Ionicons name="arrow-back" size={20} color="black" />
               </View>
               <View className="flex-row gap-3">
-                <View className="p-2 z-10 bg-white rounded-full">
+                <Pressable
+                  onPress={() => router.push('/search')}
+                  className="p-2 z-10 bg-white rounded-full">
                   <Ionicons name="search" size={20} color="black" />
-                </View>
-                <View className="p-2 z-10 bg-white rounded-full">
+                </Pressable>
+                <Pressable
+                  onPress={() => router.push('/search')}
+                  className="p-2 z-10 bg-white rounded-full">
                   <Ionicons name="ellipsis-vertical-outline" size={20} color="black" />
-                </View>
+                </Pressable>
               </View>
             </View>
 
