@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
 import { Image } from 'expo-image'
@@ -6,6 +6,7 @@ import { Link, router } from 'expo-router'
 import { Animated, Pressable, SectionList, StatusBar, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { products } from 'data/products'
+import { useStore } from 'utils/store'
 
 function NavBar({ scrollY }: { scrollY: Animated.Value }) {
   const insets = useSafeAreaInsets()
@@ -40,20 +41,15 @@ function NavBar({ scrollY }: { scrollY: Animated.Value }) {
   )
 }
 
-function ListItem({
-  item,
-  cartItems,
-  setCartItems,
-}: {
-  item: (typeof products)[number]['items'][number]
-  cartItems: Record<string, { quantity: number; price: number }>
-  setCartItems: React.Dispatch<
-    React.SetStateAction<Record<string, { quantity: number; price: number }>>
-  >
-}) {
+function ListItem({ item }: { item: (typeof products)[number]['items'][number] }) {
+  const cartItems = useStore((state) => state.cartItems)
+  const addToCart = useStore((state) => state.addToCart)
+  const removeFromCart = useStore((state) => state.removeFromCart)
+
   const itemId = item.name
   const cartItem = cartItems[itemId]
   const quantity = cartItem?.quantity || 0
+
   return (
     <View className="flex-row py-4 relative bg-white px-6 border-b border-gray-200">
       <Image
@@ -74,24 +70,7 @@ function ListItem({
           <View className="flex-row items-center w-24 justify-end">
             {quantity > 0 && (
               <Pressable
-                onPress={() => {
-                  setCartItems((prev) => {
-                    const newQuantity = cartItem.quantity - 1
-                    if (newQuantity === 0) {
-                      const newItems = { ...prev }
-                      delete newItems[itemId]
-                      return newItems
-                    } else {
-                      return {
-                        ...prev,
-                        [itemId]: {
-                          ...cartItem,
-                          quantity: newQuantity,
-                        },
-                      }
-                    }
-                  })
-                }}
+                onPress={() => removeFromCart(itemId)}
                 className="rounded-full bg-gray-100 p-1 items-center justify-center">
                 <Ionicons name="remove" size={18} color="#374151" />
               </Pressable>
@@ -102,27 +81,7 @@ function ListItem({
             )}
 
             <Pressable
-              onPress={() => {
-                setCartItems((prev) => {
-                  if (cartItem) {
-                    return {
-                      ...prev,
-                      [itemId]: {
-                        ...cartItem,
-                        quantity: cartItem.quantity + 1,
-                      },
-                    }
-                  } else {
-                    return {
-                      ...prev,
-                      [itemId]: {
-                        quantity: 1,
-                        price: item.price || 0,
-                      },
-                    }
-                  }
-                })
-              }}
+              onPress={() => addToCart(item)}
               className="rounded-full bg-green-200 p-1 items-center justify-center">
               <Ionicons name="add" size={18} color="#1a7c3a" />
             </Pressable>
@@ -170,15 +129,12 @@ function ButtonSheet({ bottomSheetRef }: { bottomSheetRef: React.RefObject<Botto
 
 export default function Home() {
   const bottomSheetRef = React.useRef<BottomSheet>(null)
-  const [cartItems, setCartItems] = useState<Record<string, { quantity: number; price: number }>>(
-    {}
-  )
   const scrollY = useRef(new Animated.Value(0)).current
-  const totalCost = Object.values(cartItems).reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  )
+  const cartItems = useStore((state) => state.cartItems)
+  const getTotalCost = useStore((state) => state.getTotalCost)
+  const totalCost = getTotalCost()
   const animation = useRef(new Animated.Value(0)).current
+
   useEffect(() => {
     Animated.timing(animation, {
       toValue: totalCost > 0 ? 1 : 0,
@@ -251,9 +207,7 @@ export default function Home() {
             <Text className="font-semibold text-gray-900 text-xl">{title}</Text>
           </View>
         )}
-        renderItem={({ item }) => (
-          <ListItem item={item} cartItems={cartItems} setCartItems={setCartItems} />
-        )}
+        renderItem={({ item }) => <ListItem item={item} />}
       />
 
       <Animated.View
@@ -263,7 +217,7 @@ export default function Home() {
           bottom: 10,
           opacity: animation,
         }}>
-        <Link href="/cart" asChild>
+        <Link href={{ pathname: '/cart' }} asChild>
           <Pressable
             className="bg-green-600 py-4 rounded-full flex-row justify-center items-center"
             onPress={() => {
